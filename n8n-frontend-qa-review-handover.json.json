@@ -1,0 +1,204 @@
+{
+  "name": "n8n-frontend-qa-review-handover.json",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -192,
+        -96
+      ],
+      "id": "4871bddf-8475-4b14-9747-b5f0a2e32c5c",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "04424456-fcef-4386-9fb4-fef685ae4442",
+              "leftValue": "={{ $json.history_items[0].after.status }}",
+              "rightValue": "QA REVIEW",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "3636bd1b-75a4-44d2-82cd-0014e6a2a61a",
+              "leftValue": "={{ $json.history_items[0].after.status }}",
+              "rightValue": "qa review",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        16,
+        0
+      ],
+      "id": "db09c348-e51e-4ca7-8079-f6151cbb2ef9",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "id": "={{ $json.task_id }}"
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        224,
+        -96
+      ],
+      "id": "8869b428-75ed-4230-9314-ad458cca18e9",
+      "name": "Get a task",
+      "credentials": {
+        "clickUpApi": {
+          "id": "FGZ36444ame9ffAE",
+          "name": "ClickUp account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "team": "90181787093",
+        "events": [
+          "taskStatusUpdated"
+        ],
+        "filters": {
+          "listId": "901812347933",
+          "spaceId": "90186999301"
+        }
+      },
+      "type": "n8n-nodes-base.clickUpTrigger",
+      "typeVersion": 1,
+      "position": [
+        -464,
+        -96
+      ],
+      "id": "ac494dc4-a18d-47e5-bf97-0de478b03cfd",
+      "name": "ClickUp Trigger",
+      "webhookId": "e1e5f2d1-3052-44ad-83ce-7475d60b79e8",
+      "credentials": {
+        "clickUpApi": {
+          "id": "FGZ36444ame9ffAE",
+          "name": "ClickUp account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "team": "90181787093",
+        "space": "90188606741",
+        "folderless": true,
+        "list": "901814015915",
+        "name": "={{ `[${$json.id}] ${$json.name}` }}",
+        "additionalFields": {
+          "assignees": [
+            107468431
+          ],
+          "content": "= {{ $json.text_content }}",
+          "markdownContent": true,
+          "tags": "={{ $json.tags }}"
+        }
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        416,
+        -96
+      ],
+      "id": "85bcd1c7-de00-49b7-8417-d6dab61cd069",
+      "name": "Create a task1",
+      "credentials": {
+        "clickUpApi": {
+          "id": "FGZ36444ame9ffAE",
+          "name": "ClickUp account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Get a task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a task": {
+      "main": [
+        [
+          {
+            "node": "Create a task1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ClickUp Trigger": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "timeSavedMode": "fixed",
+    "saveDataSuccessExecution": "none",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false,
+    "saveDataErrorExecution": "none",
+    "saveManualExecutions": false
+  },
+  "versionId": "b23a48a5-aeec-44d6-8e16-f91bffdea7e5",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "bfefda8b8561e999840c4adfac23e386ed9e4cb2425c2372729c1876c847c669"
+  },
+  "id": "jtSmIiRhkNUas1bm",
+  "tags": []
+}
